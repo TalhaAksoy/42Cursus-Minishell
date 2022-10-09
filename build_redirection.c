@@ -1,11 +1,24 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   build_redirection.c                                :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: saksoy <saksoy@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/10/09 03:58:56 by saksoy            #+#    #+#             */
+/*   Updated: 2022/10/09 04:04:34 by saksoy           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
-void	build_add_redirection(char *arg, char *type, t_redirection **redir, int *check_redir)
+void	build_add_redirection(char *arg, char *type, t_redirection **redir, \
+	int *check_redir)
 {
 	char	*ptr;
 	char	*tmp;
 
-	ptr = ft_calloc(sizeof(char) * ft_strlen(arg) + 1,sizeof(char));
+	ptr = ft_calloc(sizeof(char) * ft_strlen(arg) + 1, sizeof(char));
 	tmp = ft_str_clearquotes(arg, ptr);
 	ft_lstadd_back_redir(redir, new_s_redirection(type, tmp));
 	free(arg);
@@ -60,7 +73,7 @@ char	*build_qoete(char *str, int *index)
 	char	*n_str;
 	char	quote;
 
-	n_str = ft_calloc(1,sizeof(char));
+	n_str = ft_calloc(1, sizeof(char));
 	while (str[*index])
 	{
 		if (str[*index] == '"' || str[*index] == '\'')
@@ -81,7 +94,6 @@ char	*build_qoete(char *str, int *index)
 			break ;
 	}
 	return (n_str);
-	//return ft_strappend(n_str, '"'); silince 25 oluyo
 }
 
 char	*build_arger(char *str, int *index, int *check_redir)
@@ -92,7 +104,6 @@ char	*build_arger(char *str, int *index, int *check_redir)
 	start_index = *index;
 	if (str[*index] == '"' || str[*index] == '\'')
 	{
-		//tmp = ft_substr(str, *index, ft_get_chrindex(&str[*index + 1], str[*index]) + 2);
 		tmp = build_qoete(str, index);
 		ft_memset(&str[start_index], ' ', *index - start_index);
 		(*index)--;
@@ -105,62 +116,6 @@ char	*build_arger(char *str, int *index, int *check_redir)
 		ft_memset(&str[start_index], ' ', ft_strlen(tmp));
 		(*index)--;
 	}
-	//*index += ft_strlen(tmp);
 	*check_redir = 2;
 	return (tmp);
 }
-
-//type'ın tırkan içinde olma durumu
-void	build_redirection(t_redirection **redir, char	**cmd)
-{
-	int		check_redir;
-	char	*type;
-	char	*arg;
-	int		idx;
-	t_redirection *tmp_redir; //silinecek sadece ekrana basmak için kullanılıyor
-
-	idx = -1;
-	check_redir = 0;
-	type = arg = NULL;
-	printf("-------\n");
-	printf("%s\n",*cmd);
-	printf("-------\n");
-	while (++idx < (int)ft_strlen(cmd[0]))
-	{
-		if (check_redir == 0 && (cmd[0][idx] == '"' || cmd[0][idx] == '\''))
-		{
-			idx += ft_strchr(&(cmd[0][idx + 1]), cmd[0][idx]) - &(cmd[0][idx]);
-
-		}
-		if(is_redir(&(cmd[0][idx])))
-			type = build_typer(cmd[0], &idx, &check_redir);
-		if (check_redir == 1 && cmd[0][idx] != ' ' && !is_redir(&cmd[0][idx]))
-		{
-			arg = build_arger(cmd[0],&idx,&check_redir);
-		}
-		if (check_redir == 2)
-		{
-			build_add_redirection(arg,type,redir,&check_redir);
-			type = NULL;
-			//free(arg);
-			arg = NULL;
-			//check_redir = 0;
-		}
-		//printf("ASAMA REDİR:_%s_\n",cmd[0]);
-	}
-	if (!*redir)
-		*redir = NULL;
-	else
-	{
-		//printf("REDIR_REDIR_REDIR\n");
-		tmp_redir = *redir;
-		while (tmp_redir)
-		{
-			//printf("redir type: _%s_ arg: _%s_\n", tmp_redir->redir, tmp_redir->args);
-			tmp_redir = tmp_redir->next;
-		}
-
-	}
-}
-
-//echo > "a"''"b"c "asdadad" adsadas2

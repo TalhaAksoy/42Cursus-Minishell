@@ -1,37 +1,34 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   signal.c                                           :+:      :+:    :+:   */
+/*   utils2.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: saksoy <saksoy@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/10/09 03:54:24 by saksoy            #+#    #+#             */
-/*   Updated: 2022/10/09 03:54:25 by saksoy           ###   ########.fr       */
+/*   Created: 2022/10/09 03:55:03 by saksoy            #+#    #+#             */
+/*   Updated: 2022/10/09 03:57:17 by saksoy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+#include "minishell_types.h"
 
-int	ctrl_d(void)
+t_redirection	*ft_lstlast_redir(t_redirection *redir)
 {
-	printf("Exit");
-	exit(1);
+	if (redir == NULL)
+		return (0);
+	while (redir->next != NULL)
+		redir = redir->next;
+	return (redir);
 }
 
-void	sig_handler(int sig_num)
+void	ft_lstadd_back_redir(t_redirection **redir, t_redirection *new)
 {
-	if (sig_num == SIGINT)
+	if (redir && new)
 	{
-		printf("\n");
-		rl_on_new_line();
-		rl_replace_line("", 0);
-		rl_redisplay();
+		if (!*redir)
+			*redir = new;
+		else
+			ft_lstlast_redir(*redir)-> next = new;
 	}
-	return ;
-}
-
-void	sig_handler_heredoc(int sig_num)
-{
-	if (sig_num == SIGINT)
-		exit(1);
 }

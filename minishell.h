@@ -76,5 +76,4 @@ void	ft_lstadd_back_redir(t_redirection **redir, t_redirection *new);
 
 
 
-
 #endif
